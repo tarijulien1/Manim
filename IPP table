@@ -1,0 +1,79 @@
+class GenScene(Scene):
+    def construct(self):
+        table = Table(
+            [["+", "u", "v"],
+             ["-", "u'", "∫v"]],
+            col_labels=[Text("sgn"), Text("d/dx"), Text("∫")],
+            include_outer_lines=True
+        ).scale(0.7).to_edge(LEFT)
+
+        formula = MathTex(
+            r"\int u v \, dx = [ u \int v ] - \int u' \int v \, dx"
+        ).scale(0.8).to_edge(RIGHT)
+
+        highlight_uv = SurroundingRectangle(formula[0][6:11], color=BLUE, buff=0.1)
+        highlight_uprime_v = SurroundingRectangle(formula[0][13:], color=RED, buff=0.1)
+
+        arrow_uv = Arrow(start=table.get_cell((2, 2)).get_center(), end=table.get_cell((3, 3)).get_center(), color=BLUE)
+        arrow_uprime_v = Arrow(start=table.get_cell((3, 2)).get_center(), end=table.get_cell((3, 3)).get_center(), color=RED)
+        
+
+        self.play(Create(table), Write(formula))
+        self.wait(1)
+
+        self.play(Create(arrow_uv), Create(highlight_uv))
+        self.wait(1)
+        self.play(Create(arrow_uprime_v), Create(highlight_uprime_v))
+        self.wait(1)
+
+        self.play(FadeOut(arrow_uv), FadeOut(highlight_uv), FadeOut(arrow_uprime_v), FadeOut(highlight_uprime_v))
+        self.wait(0.5)
+
+        Ntable = Table(
+            [["+", "u", "v"],
+             ["-", "u'", "∫v"],
+             ["+", "u''", "∫∫v"]
+             ],
+            col_labels=[Text("sgn"), Text("d/dx"), Text("∫")],
+            include_outer_lines=True
+        ).scale(0.7).to_edge(LEFT)
+
+        Ntable.move_to(table)
+        self.play(Transform(table,Ntable))
+        self.wait(1)
+
+        new_formula = MathTex(
+            r"\int u v \, dx = [ u \int v ] - [ u' \int \int v ] + \int u'' \int \int v \, dx"
+        ).scale(0.6).to_edge(RIGHT)
+
+        self.play(Transform(formula, new_formula))
+        self.wait(1)
+
+        highlight_1 = SurroundingRectangle(new_formula[0][6:11], color=RED, buff=0.1)
+        highlight_2 = SurroundingRectangle(new_formula[0][13:19], color=RED, buff=0.1)
+        highlight_3 = SurroundingRectangle(new_formula[0][21:], color=GREEN, buff=0.1)
+
+        arrow_1 = Arrow(
+            start=Ntable.get_cell((2, 2)).get_center(),
+            end=Ntable.get_cell((3, 3)).get_center(),
+            color=RED
+        )
+        arrow_2 = Arrow(
+            start=Ntable.get_cell((3, 2)).get_center(),
+            end=Ntable.get_cell((4, 3)).get_center(),
+            color=RED
+        )
+
+        arrow_3 = Arrow(
+            start=Ntable.get_cell((4, 2)).get_center(),
+            end=Ntable.get_cell((4, 3)).get_center(),
+            color=GREEN
+        )
+
+
+        self.play(Create(arrow_1), Create(highlight_1))
+        self.wait(0.5)
+        self.play(Create(arrow_2), Create(highlight_2))
+        self.wait(0.5)
+        self.play(Create(arrow_3), Create(highlight_3))
+        self.wait(0.5)
