@@ -1,0 +1,121 @@
+class ThGauss_sym(ThreeDScene):
+    def construct(self):
+        axes = ThreeDAxes()
+
+        def Ligne(u,v,c=YELLOW):
+            return Line3D(
+            start=u,
+            end=v,
+            color=c,
+            thickness=0.01
+            )
+        def Arrows(u,v,c=RED):
+            return Arrow3D(
+            start=u,
+            end=v,
+            resolution=8,
+            color=c)
+        
+        yellow_line = Ligne([0, 0, -10],[0, 0, 10])
+        point = np.array([2, 2, 0])
+        
+        Tpoint=np.array([point[1],-point[0],point[2]])
+        Npoint= (point[0]**2+point[1]**2+point[2]**2)**0.5
+
+        
+        def Cross(point):
+            cross_size = 0.2
+            return VGroup(
+            Line3D(point - [cross_size, cross_size, 0], point + [cross_size, cross_size, 0], color=RED, thickness=0.01),
+            Line3D(point - [cross_size, -cross_size, 0], point + [cross_size, -cross_size, 0], color=RED, thickness=0.01),
+            Line3D(point - [0, 0, cross_size], point + [0,0, cross_size], color=RED, thickness=0.01)
+            )
+
+        #label = Text3D("M", color=RED).move_to(point + [0.3, 0.3, 0.3])
+        Mlabel= Text("M", color=RED).move_to(point + [0.3, 0.3, 0.3])
+        Llabel=Tex("$\lambda$", color=YELLOW).move_to([0.3,0.3,3.3])
+
+        cross=Cross(point)
+
+        e_r = Arrows(point, point+point/Npoint, c=RED)
+        e_thet= Arrows(point,point+Tpoint/Npoint,c=GREEN)
+        e_x= Arrows(point, point+np.array([0,0,1]),c=YELLOW)
+
+        Rlabel=Tex("$e_r$", color=RED).move_to(point+point/Npoint+[0.3,0.3,0.3])
+        Tlabel=Tex("$e_\\theta$", color=GREEN).move_to(point+Tpoint/Npoint+[0.3,0.3,0.3])
+        Xlabel=Tex("$e_x$", color=YELLOW).move_to(point+[0.3,0.3,1.3])
+
+        self.add(axes, yellow_line, cross,Mlabel,Llabel,Rlabel, Tlabel, Xlabel, e_r,e_thet,e_x)
+
+        self.add_fixed_orientation_mobjects(Mlabel,Llabel, Rlabel,Tlabel,Xlabel)
+
+        
+        self.set_camera_orientation(phi=70 * DEGREES, theta=10 * DEGREES)
+        self.wait(2)
+
+        u=np.array([1,0,0])
+        v=np.array([0,1,0])
+        w=np.array([0,0,1])
+
+        def Plane(u,v,c=GREEN):
+            s_vals = [-5, 5]
+            t_vals = [-5, 5]
+        
+            corners = [
+            point + s_vals[0]*u + t_vals[0]*v,
+            point + s_vals[1]*u + t_vals[0]*v,
+            point + s_vals[1]*u + t_vals[1]*v,
+            point + s_vals[0]*u + t_vals[1]*v,
+            ]
+            return Polygon(*corners, color=c, fill_opacity=0.2, shade_in_3d=True)
+            
+        plane = Plane(u,v, c=ORANGE)
+        self.add(plane)
+        self.move_camera(
+            phi=90*DEGREES,      
+            theta=45*DEGREES,   
+            run_time=2,          
+            rate_func=smooth     
+        )        
+        self.wait(1)
+
+        self.move_camera(
+            phi=70*DEGREES,      
+            theta=10*DEGREES,   
+            run_time=2,          
+            rate_func=smooth     
+        ) 
+        self.wait(1)
+        self.play(FadeOut(plane))
+        self.wait(1)
+        
+        plane2=Plane(w,point)
+        self.add(plane2)
+        
+        self.move_camera(
+            phi=90*DEGREES,      
+            theta=45*DEGREES,   
+            run_time=2,          
+            rate_func=smooth     
+        ) 
+        self.wait(1)
+
+        self.move_camera(
+            phi=70*DEGREES,      
+            theta=10*DEGREES,   
+            run_time=2,          
+            rate_func=smooth     
+        ) 
+        self.add(plane)
+        self.wait(1)
+        red_path= Ligne(5*point,-5*point,c=RED)
+        self.add(red_path)
+        self.wait(1)
+
+        self.move_camera(
+            phi=70*DEGREES,      
+            theta=80*DEGREES,   
+            run_time=2,          
+            rate_func=smooth     
+        ) 
+        self.wait(1)
